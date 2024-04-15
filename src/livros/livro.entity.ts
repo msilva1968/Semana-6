@@ -30,7 +30,4 @@ import {
 
     @Column({ name: 'idautor', nullable: false })
     idautor: string;
-
-    @OneToMany(() => ItemPedidoEntity, (itemPedido) => itemPedido.produto)
-  itensPedido: ItemPedidoEntity[];
 }
