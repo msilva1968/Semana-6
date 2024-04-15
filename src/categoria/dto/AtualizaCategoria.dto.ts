@@ -1,8 +1,5 @@
 import { IsOptional, IsNotEmpty, MaxLength } from 'class-validator';
+import { CriaCategoriaDTO } from './CriaCategoria.dto';
+import { PartialType } from '@nestjs/mapped-types';
 
-export class AtualizaCategoriaDTO {
-  @IsNotEmpty({ message: 'O nome não pode ser vazio!' })
-  @MaxLength(100, { message: 'O nome precisa ter no máximo 100 caracteres!'})
-  @IsOptional()
-  nome: string;
-}
+export class AtualizaCategoriaDTO extends PartialType(CriaCategoriaDTO) {}

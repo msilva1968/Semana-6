@@ -17,10 +17,10 @@ export class criaTabelas1684864570168 implements MigrationInterface {
     );
 
     await queryRunner.query(
-      `ALTER TABLE "livros" ADD CONSTRAINT "FK_eb1531605709dd94ec67b2141d0" FOREIGN KEY ("id") REFERENCES "autor"("id")`,
+      `ALTER TABLE "livros" ADD CONSTRAINT "FK_eb1531605709dd94ec67b2141d0" FOREIGN KEY ("id") REFERENCES "autor"("id") ON DELETE CASCADE ON UPDATE CASCADE`,
     );
     await queryRunner.query(
-      `ALTER TABLE "livros" ADD CONSTRAINT "FK_67339e59ab4b3ed091cf318f426" FOREIGN KEY ("idcategoria") REFERENCES "catregoria"("idcategoria")`,
+      `ALTER TABLE "livros" ADD CONSTRAINT "FK_67339e59ab4b3ed091cf318f426" FOREIGN KEY ("idcategoria") REFERENCES "catregoria"("idcategoria") ON DELETE CASCADE ON UPDATE CASCADE`,
     );
   }
 

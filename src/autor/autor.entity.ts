@@ -1,4 +1,3 @@
-import { PedidoEntity } from '../pedido/pedido.entity';
 import {
   Entity,
   Column,

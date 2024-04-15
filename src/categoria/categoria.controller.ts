@@ -1,61 +1,61 @@
 import {
-    Body,
-    Controller,
-    Delete,
-    Get,
-    Param,
-    Post,
-    Put,
-  } from '@nestjs/common';
-  import { randomUUID } from 'crypto';
-  import { AtualizaCategoriaDTO } from './dto/AtualizaCategoria.dto';
-  import { CriaCategoriaDTO } from './dto/CriaCategoria.dto';
-  import { CategoriaEntity } from './categoria.entity';
-  import { CategoriaService } from './categoria.service';
-  
-  @Controller('categoria')
-  export class CategoriaController {
-    constructor(private readonly categoriaService: CategoriaService) {}
-  
-      @Post()
-    async criaNovo(@Body() dadosCategoria: CriaCategoriaDTO) {
-      const categoria = new CategoriaEntity();
-  
-      categoria.idcategoria = randomUUID();
-      categoria.nome = dadosCategoria.nome;
-  
-      const categoriaCadastrado = this.categoriaService.criaCategoria(categoria);
-      return categoriaCadastrado;
-    }
-  
-    @Get()
-    async listaTodos() {
-      return this.categoriaService.listaCategoria();
-    }
-  
-    @Put('/:idcategoria')
-    async atualiza(
-      @Param('idcategoria') idcategoria: string,
-      @Body() dadosCategoria: AtualizaCategoriaDTO,
-    ) {
-      const categoriaAlterado = await this.categoriaService.atualizaCategoria(
-        idcategoria,
-        dadosCategoria,
-      );
-  
-      return {
-        mensagem: 'Categoria atualizada com sucesso',
-        autor: categoriaAlterado,
-      };
-    }
-  
-    @Delete('/:idcategoria')
-    async remove(@Param('idcategoria') idcategoria: string) {
-      const categoriaRemovido = await this.categoriaService.deletaCategoria(idcategoria);
-  
-      return {
-        mensagem: 'Categoria excluida com sucesso',
-        livro: categoriaRemovido,
-      };
-    }
-  }  
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
+import { AtualizaCategoriaDTO } from './dto/AtualizaCategoria.dto';
+import { CriaCategoriaDTO } from './dto/CriaCategoria.dto';
+import { ListaCategoriaDTO } from './dto/ListaCategoria.dto';
+import { CategoriaService } from './categoria.service';
+
+@Controller('/categoria')
+export class CategoriaController {
+  constructor(private categoriaService: CategoriaService) {}
+
+  @Post()
+  async criaCategoria(@Body() dadosDaCategoria: CriaCategoriaDTO) {
+    const categoriaCriada = await this.categoriaService.criaCategoria(dadosDaCategoria);
+
+    return {
+      usuario: new ListaCategoriaDTO(categoriaCriada.idcategoria, categoriaCriada.nome),
+      messagem: 'Categoria criada com sucesso',
+    };
+  }
+
+  @Get()
+  async listaCategoria() {
+    const categoriaSalva = await this.categoriaService.listaCategoria();
+
+    return categoriaSalva;
+  }
+
+  @Put('/:idcategoria')
+  async atualizaCategoria(
+    @Param('idcategoria') idcategoria: string,
+    @Body() novosDados: AtualizaCategoriaDTO,
+  ) {
+    const categoriaAtualizada = await this.categoriaService.atualizaCategoria(
+      idcategoria,
+      novosDados,
+    );
+
+    return {
+      categoria: categoriaAtualizada,
+      messagem: 'Categoria atualizada com sucesso',
+    };
+  }
+
+  @Delete('/:idcategoria')
+  async removeCatwgoria(@Param('idcategoria') idcategoria: string) {
+    const categoriaRemovida = await this.categoriaService.deletaCategoria(idcategoria);
+
+    return {
+      autor: categoriaRemovida,
+      messagem: 'Categoria removida com suceso',
+    };
+  }
+}

@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ListaCategoriaDTO } from './dto/ListaCategoria.dto';
 import { CategoriaEntity } from './categoria.entity';
 import { Repository } from 'typeorm';
 import { AtualizaCategoriaDTO } from './dto/AtualizaCategoria.dto';
+import { CriaCategoriaDTO } from './dto/CriaCategoria.dto';
 
 @Injectable()
 export class CategoriaService {
@@ -12,8 +13,12 @@ export class CategoriaService {
     private readonly categoriaRepository: Repository<CategoriaEntity>,
   ) {}
 
-  async criaCategoria(categoriaEntity: CategoriaEntity) {
-    await this.categoriaRepository.save(categoriaEntity);
+  async criaCategoria(dadosDaCategoria: CriaCategoriaDTO) {
+    const categoriaEntity = new CategoriaEntity();
+
+    Object.assign(categoriaEntity, dadosDaCategoria as CategoriaEntity);
+
+    return this.categoriaRepository.save(categoriaEntity);
   }
 
   async listaCategoria() {
@@ -30,12 +35,21 @@ export class CategoriaService {
   }
 
   async atualizaCategoria(idcategoria: string, novosDados: AtualizaCategoriaDTO) {
-    const entityName = await this.categoriaRepository.findOneBy({ idcategoria });
-    Object.assign(entityName, novosDados);
-    await this.categoriaRepository.save(entityName);
+    const categoria = await this.categoriaRepository.findOneBy({ idcategoria });
+
+    if (categoria === null)
+      throw new NotFoundException('A Categoria não foi encontrada.');
+
+    Object.assign(categoria, novosDados as CategoriaEntity);
+
+    return this.categoriaRepository.save(categoria);
   }
 
   async deletaCategoria(idcategoria: string) {
-    await this.categoriaRepository.delete(idcategoria);
+    const resultado = await this.categoriaRepository.delete(idcategoria);
+
+    if (!resultado.affected)
+      throw new NotFoundException('A Categoria não foi encontrada.');
   }
+
 }
